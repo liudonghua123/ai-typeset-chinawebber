@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "AI Typeset for Chinawebber",
+  "version": "1.0",
+  "description": "AI-powered content typesetting for 博大站群 content editor",
+  "permissions": [
+    "storage",
+    "notifications",
+    "activeTab",
+    "https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp*",
+    "https://sites.ynu.edu.cn/*",
+    "https://agent.ynu.edu.cn/api/proxy/api/v1/*",
+    "https://cdnjs.cloudflare.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp*"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "AI Typeset"
+  },
+  "options_page": "options.html",
+  "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com; object-src 'self'"
+}

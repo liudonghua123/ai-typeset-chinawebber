@@ -1,0 +1,18 @@
+{
+  "name": "ai-typeset-chinawebber",
+  "version": "1.0.0",
+  "description": "AI-powered content typesetting for博大站群 content editor",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chrome-extension",
+    "ai",
+    "typesetting",
+    "chinawebber",
+    "content-editor"
+  ],
+  "author": "Claude Code",
+  "license": "MIT"
+}

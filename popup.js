@@ -1,0 +1,426 @@
+// popup.js
+document.addEventListener('DOMContentLoaded', async function() {
+  // Elements
+  const getContentBtn = document.getElementById('getContentBtn');
+  const aiTypesetBtn = document.getElementById('aiTypesetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const sourceEditorElement = document.getElementById('sourceEditor');
+  const formattedEditorElement = document.getElementById('formattedEditor');
+  const notification = document.getElementById('notification');
+  const processingOverlay = document.getElementById('processingOverlay');
+
+  // State
+  let sourceContent = '';
+  let formattedContent = '';
+  let sourceEditor = null;
+  let formattedEditor = null;
+
+  // Check if we're on the correct page
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    if (chrome.runtime.lastError) {
+      console.error('Error querying tabs:', chrome.runtime.lastError);
+      return;
+    }
+    
+    const currentTab = tabs[0];
+    const isValidPage = currentTab.url && currentTab.url.startsWith('https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp');
+
+    // Enable/disable get content button based on current page
+    getContentBtn.disabled = !isValidPage;
+
+    if (!isValidPage) {
+      showNotification('错误', '此功能仅在博大站群内容编辑页面可用', 'error');
+    }
+  });
+
+  // Initialize Monaco Editor
+  await initializeEditors();
+
+  // Get content button event
+  getContentBtn.addEventListener('click', async function() {
+    try {
+      showProcessing(true);
+
+      // Get content from the active tab
+      const tabs = await new Promise((resolve, reject) => {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+            return;
+          }
+          resolve(tabs);
+        });
+      });
+      const tab = tabs[0];
+
+      // Execute script to get editor content using V2 API
+      const results = await new Promise((resolve, reject) => {
+        chrome.tabs.executeScript(tab.id, {
+          code: `(function() {
+            const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
+            if (iframe && iframe.contentDocument) {
+              editor = iframe.contentDocument.querySelector('#vsb_content_1');
+            }
+            return editor ? editor.innerHTML : null;
+          })()`
+        }, function(result) {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+            return;
+          }
+          resolve(result);
+        });
+      });
+
+      const content = results && results[0] ? results[0] : null;
+
+      if (content) {
+        sourceContent = content;
+        if (sourceEditor) {
+          sourceEditor.setValue(content);
+        }
+        aiTypesetBtn.disabled = false;
+        showNotification('成功', '内容已获取', 'success');
+      } else {
+        throw new Error('无法从编辑器获取内容');
+      }
+    } catch (error) {
+      console.error('Error getting content:', error);
+      showNotification('错误', error.message || '获取内容时发生错误', 'error');
+    } finally {
+      showProcessing(false);
+    }
+  });
+
+  // AI Typeset button event
+  aiTypesetBtn.addEventListener('click', async function() {
+    const currentContent = sourceEditor ? sourceEditor.getValue() : sourceContent;
+
+    if (!currentContent) {
+      showNotification('错误', '没有可排版的内容', 'error');
+      return;
+    }
+
+    try {
+      showProcessing(true);
+
+      // Send message to background script for AI typesetting using callback approach
+      const response = await new Promise((resolve, reject) => {
+        const msgResponse = chrome.runtime.sendMessage({
+          action: 'aiTypeset',
+          content: currentContent
+        }, (response) => {
+          // Check if there was an error during message sending
+          if (chrome.runtime.lastError) {
+            reject(new Error('Communication error: ' + chrome.runtime.lastError.message));
+            return;
+          }
+          resolve(response);
+        });
+        
+        // Handle the case where sendMessage might fail synchronously
+        if (msgResponse === undefined && !chrome.runtime.lastError) {
+          // For Manifest V2, sendMessage may return undefined when using the callback approach
+          // This is normal behavior, so we don't reject here
+        }
+      });
+
+      if (response && response.success) {
+        formattedContent = response.formattedContent;
+        if (formattedEditor) {
+          formattedEditor.setValue(formattedContent);
+        }
+        copyBtn.disabled = false;
+        showNotification('成功', '内容已排版完成', 'success');
+      } else {
+        throw new Error(response ? (response.error || '排版失败') : '排版服务无响应');
+      }
+    } catch (error) {
+      console.error('Error during AI typesetting:', error);
+      showNotification('错误', error.message || '排版过程中发生错误', 'error');
+    } finally {
+      showProcessing(false);
+    }
+  });
+
+  // Copy button event
+  copyBtn.addEventListener('click', async function() {
+    const contentToCopy = formattedEditor ? formattedEditor.getValue() : formattedContent;
+
+    if (!contentToCopy) {
+      showNotification('错误', '没有可复制的内容', 'error');
+      return;
+    }
+
+    try {
+      showProcessing(true);
+
+      // Check if we're on the correct page
+      const tabs = await new Promise((resolve, reject) => {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+            return;
+          }
+          resolve(tabs);
+        });
+      });
+      const tab = tabs[0];
+      const isValidPage = tab.url && tab.url.startsWith('https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp');
+
+      if (!isValidPage) {
+        throw new Error('只能在博大站群内容编辑页面复制内容');
+      }
+
+      // Execute script to set editor content using V2 API
+      const results = await new Promise((resolve, reject) => {
+        chrome.tabs.executeScript(tab.id, {
+          code: `
+            (function(content) {
+              // First try to find the editor in the main document
+              let editor = document.querySelector('#vsb_content_1');
+
+              // If not found, try to find it in the iframe
+              if (!editor) {
+                const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
+                if (iframe && iframe.contentDocument) {
+                  editor = iframe.contentDocument.querySelector('#vsb_content_1');
+                }
+              }
+
+              if (editor) {
+                editor.innerHTML = content;
+                return true;
+              }
+              return false;
+            })(${JSON.stringify(contentToCopy)})
+          `
+        }, function(result) {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+            return;
+          }
+          resolve(result);
+        });
+      });
+
+      const success = results && results[0] ? results[0] : false;
+
+      if (success) {
+        showNotification('成功', '内容已复制到编辑器', 'success');
+      } else {
+        throw new Error('无法将内容复制到编辑器');
+      }
+    } catch (error) {
+      console.error('Error copying content:', error);
+      showNotification('错误', error.message || '复制内容时发生错误', 'error');
+    } finally {
+      showProcessing(false);
+    }
+  });
+
+  // Initialize Monaco Editors
+  async function initializeEditors() {
+    try {
+      // Load Monaco Editor
+      await loadMonaco();
+
+      // Initialize source editor
+      sourceEditor = monaco.editor.create(sourceEditorElement, {
+        value: sourceContent || '',
+        language: 'html',
+        theme: 'vs-light',
+        automaticLayout: true,
+        minimap: {
+          enabled: true
+        },
+        fontSize: 14,
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        readOnly: false,
+        formatOnType: true,
+        formatOnPaste: true
+      });
+
+      // Initialize formatted editor
+      formattedEditor = monaco.editor.create(formattedEditorElement, {
+        value: formattedContent || '',
+        language: 'html',
+        theme: 'vs-light',
+        automaticLayout: true,
+        minimap: {
+          enabled: true
+        },
+        fontSize: 14,
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        readOnly: false,
+        formatOnType: true,
+        formatOnPaste: true
+      });
+
+      // Add change listeners
+      sourceEditor.onDidChangeModelContent(() => {
+        sourceContent = sourceEditor.getValue();
+        aiTypesetBtn.disabled = !sourceContent;
+      });
+
+      formattedEditor.onDidChangeModelContent(() => {
+        formattedContent = formattedEditor.getValue();
+        const isValidPage = checkCurrentPage();
+        copyBtn.disabled = !formattedContent || !isValidPage;
+      });
+      
+      // Add format button event listeners
+      document.getElementById('formatSourceBtn').addEventListener('click', async () => {
+        if (sourceEditor) {
+          try {
+            sourceEditor.getAction('editor.action.formatDocument').run();
+          } catch (error) {
+            console.error('Error formatting source editor:', error);
+            // Fallback: trigger the format action using the editor instance
+            sourceEditor.trigger('any', 'editor.action.formatDocument', null);
+          }
+        }
+      });
+      
+      document.getElementById('formatTargetBtn').addEventListener('click', async () => {
+        if (formattedEditor) {
+          try {
+            formattedEditor.getAction('editor.action.formatDocument').run();
+          } catch (error) {
+            console.error('Error formatting formatted editor:', error);
+            // Fallback: trigger the format action using the editor instance
+            formattedEditor.trigger('any', 'editor.action.formatDocument', null);
+          }
+        }
+      });
+      
+      // Add copy button event listeners
+      document.getElementById('copySourceBtn').addEventListener('click', async () => {
+        if (sourceEditor) {
+          const content = sourceEditor.getValue();
+          try {
+            await navigator.clipboard.writeText(content);
+            showNotification('成功', '源内容已复制到剪贴板', 'success');
+          } catch (error) {
+            console.error('Error copying source content:', error);
+            showNotification('错误', '复制源内容失败', 'error');
+          }
+        }
+      });
+      
+      document.getElementById('copyTargetBtn').addEventListener('click', async () => {
+        if (formattedEditor) {
+          const content = formattedEditor.getValue();
+          try {
+            await navigator.clipboard.writeText(content);
+            showNotification('成功', '目标内容已复制到剪贴板', 'success');
+          } catch (error) {
+            console.error('Error copying target content:', error);
+            showNotification('错误', '复制目标内容失败', 'error');
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('Error initializing Monaco Editor:', error);
+      showNotification('错误', '编辑器初始化失败: ' + error.message, 'error');
+
+      // Fallback to simple divs
+      sourceEditorElement.innerHTML = '<div class="editor-placeholder">编辑器加载失败，请刷新页面重试</div>';
+      formattedEditorElement.innerHTML = '<div class="editor-placeholder">编辑器加载失败，请刷新页面重试</div>';
+    }
+  }
+
+  // Load Monaco Editor
+  async function loadMonaco() {
+    return new Promise((resolve, reject) => {
+      if (window.monaco) {
+        resolve();
+        return;
+      }
+
+      // Create a more secure way to load Monaco
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js';
+      script.onload = () => {
+        // Use a more secure configuration
+        if (typeof require !== 'undefined') {
+          require.config({
+            paths: {
+              'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs'
+            },
+            'vs/nls': {
+              availableLanguages: {
+                '*': 'zh-cn' // Set to Chinese if needed
+              }
+            }
+          });
+
+          // Load the main editor module
+          require(['vs/editor/editor.main'], () => {
+            resolve();
+          }, (err) => {
+            console.error('Monaco editor failed to load:', err);
+            reject(new Error('Monaco editor failed to load'));
+          });
+        } else {
+          reject(new Error('RequireJS not available'));
+        }
+      };
+      script.onerror = (err) => {
+        console.error('Failed to load Monaco loader:', err);
+        reject(new Error('Failed to load Monaco editor'));
+      };
+
+      document.head.appendChild(script);
+    });
+  }
+
+  // Check current page
+  function checkCurrentPage() {
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        const currentTab = tabs[0];
+        const isValidPage = currentTab.url && currentTab.url.startsWith('https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp');
+        resolve(isValidPage);
+      });
+    });
+  }
+
+  // Show/hide processing overlay
+  function showProcessing(show) {
+    processingOverlay.style.display = show ? 'flex' : 'none';
+  }
+
+  // Show notification
+  function showNotification(title, message, type) {
+    notification.textContent = `${title}: ${message}`;
+    notification.className = 'notification ' + type;
+    notification.style.display = 'block';
+
+    // Also send to background for system notification
+    if (chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage({
+        action: 'showNotification',
+        title: title,
+        message: message,
+        type: type
+      }, (response) => {
+        // Check for communication errors but don't do anything since this is optional
+        if (chrome.runtime.lastError) {
+          console.warn('Notification sending error:', chrome.runtime.lastError.message);
+        }
+      });
+    }
+
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, 3000);
+  }
+});

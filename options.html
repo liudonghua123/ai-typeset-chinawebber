@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --success-color: #4caf50;
+      --error-color: #f44336;
+      --warning-color: #ff9800;
+      --gray-100: #f8f9fa;
+      --gray-200: #e9ecef;
+      --gray-300: #dee2e6;
+      --gray-700: #495057;
+      --gray-900: #212529;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.2s ease-in-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--gray-900);
+      line-height: 1.6;
+      padding: 30px;
+      min-width: 900px;
+      min-height: 700px;
+      margin: 0 auto;
+    }
+
+    .container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 30px;
+      margin-top: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    h1 {
+      color: var(--primary-color);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    h1 svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .subtitle {
+      color: var(--gray-700);
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--gray-900);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    label svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary-color);
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--border-radius);
+      font-size: 15px;
+      transition: var(--transition);
+      background-color: #fafafa;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    input[type="text"]:hover,
+    input[type="password"]:hover {
+      border-color: var(--gray-300);
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button.primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    button.primary:hover {
+      background-color: #3a56d4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+    }
+
+    button.secondary {
+      background-color: var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    button.secondary:hover {
+      background-color: var(--gray-300);
+      transform: translateY(-2px);
+    }
+
+    .notification {
+      padding: 18px 24px;
+      border-radius: var(--border-radius);
+      color: white;
+      font-weight: 500;
+      margin-bottom: 25px;
+      display: none;
+      box-shadow: var(--box-shadow);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, var(--success-color), #43a047);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, var(--error-color), #e53935);
+    }
+
+    .notification.warning {
+      background: linear-gradient(135deg, var(--warning-color), #fb8c00);
+    }
+
+    .form-description {
+      background-color: var(--gray-100);
+      border-left: 4px solid var(--primary-color);
+      padding: 16px;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-description h3 {
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+
+    .form-description ul {
+      padding-left: 20px;
+    }
+
+    .form-description li {
+      margin-bottom: 6px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-200);
+      color: var(--gray-700);
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M19.4 15C19.2667 15.2667 18.8 16.2 17.8 16.2C17.2667 16.2 16.7333 16.0667 16.2 15.8C15.6667 15.5333 15.2667 15.2 15 14.8C14.7333 14.4 14.5333 14 14.4 13.6C14.2667 13.2 14.2 12.7333 14.2 12.2C14.2 11.6667 14.2667 11.2 14.4 10.8C14.5333 10.4 14.7333 10 15 9.6C15.2667 9.2 15.6667 8.86667 16.2 8.6C16.7333 8.33333 17.2667 8.2 17.8 8.2C18.8 8.2 19.2667 9.13333 19.4 9.4M19.4 15V19M19.4 9.4V5M19.4 9.4H22M19.4 15H22M4.6 9C4.73333 8.73333 5.2 7.8 6.2 7.8C6.73333 7.8 7.26667 7.93333 7.8 8.2C8.33333 8.46667 8.73333 8.8 9 9.2C9.26667 9.6 9.46667 10 9.6 10.4C9.73333 10.8 9.8 11.2667 9.8 11.8C9.8 12.3333 9.73333 12.8 9.6 13.2C9.46667 13.6 9.26667 14 9 14.4C8.73333 14.8 8.33333 15.1333 7.8 15.4C7.26667 15.6667 6.73333 15.8 6.2 15.8C5.2 15.8 4.73333 14.8667 4.6 14.6M4.6 9V5M4.6 14.6V19M4.6 9H2M4.6 14.6H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        AI 排版助手配置
+      </h1>
+      <p class="subtitle">配置您的 AI 排版服务参数</p>
+    </header>
+
+    <div id="notification" class="notification"></div>
+
+    <div class="form-description">
+      <h3>配置说明</h3>
+      <ul>
+        <li><strong>HiAgent Base URL</strong>: HiAgent 服务的基础 URL 地址</li>
+        <li><strong>HiAgent App ID</strong>: 您的应用 ID</li>
+        <li><strong>HiAgent App Key</strong>: 您的应用密钥（安全敏感信息）</li>
+        <li><strong>Chinawebber Base URL</strong>: 博大站群系统的基础 URL</li>
+        <li><strong>User ID</strong>: 您的用户 ID</li>
+      </ul>
+    </div>
+
+    <form id="settingsForm">
+      <div class="form-group">
+        <label for="hiagent_baseurl">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21M4 7V17L12 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          HiAgent Base URL
+        </label>
+        <input type="text" id="hiagent_baseurl" placeholder="https://agent.ynu.edu.cn/api/proxy/api/v1">
+      </div>
+
+      <div class="form-group">
+        <label for="hiagent_appid">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M20.5999 22C20.5999 18.134 16.7399 15 11.9999 15C7.25991 15 3.3999 18.134 3.3999 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          HiAgent App ID
+        </label>
+        <input type="text" id="hiagent_appid" placeholder="应用ID">
+      </div>
+
+      <div class="form-group">
+        <label for="hiagent_appkey">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19.4 15C19.2667 15.2667 18.8 16.2 17.8 16.2C17.2667 16.2 16.7333 16.0667 16.2 15.8C15.6667 15.5333 15.2667 15.2 15 14.8C14.7333 14.4 14.5333 14 14.4 13.6C14.2667 13.2 14.2 12.7333 14.2 12.2C14.2 11.6667 14.2667 11.2 14.4 10.8C14.5333 10.4 14.7333 10 15 9.6C15.2667 9.2 15.6667 8.86667 16.2 8.6C16.7333 8.33333 17.2667 8.2 17.8 8.2C18.8 8.2 19.2667 9.13333 19.4 9.4M19.4 15V19M19.4 9.4V5M19.4 9.4H22M19.4 15H22M4.6 9C4.73333 8.73333 5.2 7.8 6.2 7.8C6.73333 7.8 7.26667 7.93333 7.8 8.2C8.33333 8.46667 8.73333 8.8 9 9.2C9.26667 9.6 9.46667 10 9.6 10.4C9.73333 10.8 9.8 11.2667 9.8 11.8C9.8 12.3333 9.73333 12.8 9.6 13.2C9.46667 13.6 9.26667 14 9 14.4C8.73333 14.8 8.33333 15.1333 7.8 15.4C7.26667 15.6667 6.73333 15.8 6.2 15.8C5.2 15.8 4.73333 14.8667 4.6 14.6M4.6 9V5M4.6 14.6V19M4.6 9H2M4.6 14.6H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          HiAgent App Key
+        </label>
+        <input type="password" id="hiagent_appkey" placeholder="应用密钥">
+      </div>
+
+      <div class="form-group">
+        <label for="chinawebber_baseurl">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 7L12 3L4 7M20 7L12 11M20 7V17L12 21M12 11L4 7M12 11V21M4 7V17L12 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Chinawebber Base URL
+        </label>
+        <input type="text" id="chinawebber_baseurl" placeholder="https://sites.ynu.edu.cn">
+      </div>
+
+      <div class="form-group">
+        <label for="user_id">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.5 11C10.7091 11 12.5 9.20914 12.5 7C12.5 4.79086 10.7091 3 8.5 3C6.29086 3 4.5 4.79086 4.5 7C4.5 9.20914 6.29086 11 8.5 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 8V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M23 11H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          User ID
+        </label>
+        <input type="text" id="user_id" placeholder="用户ID">
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="primary">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+            <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          保存设置
+        </button>
+        <button type="button" id="resetBtn" class="secondary">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+            <path d="M21 12C21 13.1819 20.7672 14.3522 20.3149 15.4442C19.8626 16.5361 19.1997 17.5282 18.364 18.364C17.5282 19.1997 16.5361 19.8626 15.4442 20.3149C14.3522 20.7672 13.1819 21 12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 9.61305 3.94821 7.32387 5.63604 5.63604C7.32387 3.94821 9.61305 3 12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          重置默认值
+        </button>
+      </div>
+    </form>
+
+    <footer>
+      <p>AI 排版助手 v1.0 | 为博大站群系统量身定制</p>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
