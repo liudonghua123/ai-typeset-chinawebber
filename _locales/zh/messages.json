@@ -1,0 +1,194 @@
+{
+  "extension_name": {
+    "message": "博大站群AI排版助手",
+    "description": "扩展名称"
+  },
+  "extension_description": {
+    "message": "为博大站群内容编辑器提供的AI排版功能",
+    "description": "扩展描述"
+  },
+  "popup_title": {
+    "message": "AI排版助手",
+    "description": "弹窗标题"
+  },
+  "get_content_button": {
+    "message": "获取内容",
+    "description": "获取内容按钮文本"
+  },
+  "ai_typeset_button": {
+    "message": "AI排版",
+    "description": "AI排版按钮文本"
+  },
+  "copy_button": {
+    "message": "复制",
+    "description": "复制按钮文本"
+  },
+  "source_editor_label": {
+    "message": "源内容",
+    "description": "源内容编辑器标签"
+  },
+  "formatted_editor_label": {
+    "message": "排版后内容",
+    "description": "排版后内容编辑器标签"
+  },
+  "format_button": {
+    "message": "格式化HTML",
+    "description": "格式化HTML按钮文本"
+  },
+  "copy_content_button": {
+    "message": "复制内容",
+    "description": "复制内容到剪贴板按钮文本"
+  },
+  "settings_title": {
+    "message": "AI排版助手配置",
+    "description": "设置页面标题"
+  },
+  "settings_subtitle": {
+    "message": "配置您的AI排版服务参数",
+    "description": "设置页面副标题"
+  },
+  "ai_method_label": {
+    "message": "AI 方法",
+    "description": "AI方法选择标签"
+  },
+  "hiagent_baseurl_label": {
+    "message": "HiAgent 基础 URL",
+    "description": "HiAgent基础URL设置标签"
+  },
+  "hiagent_appid_label": {
+    "message": "HiAgent 应用ID",
+    "description": "HiAgent应用ID设置标签"
+  },
+  "hiagent_appkey_label": {
+    "message": "HiAgent 应用密钥",
+    "description": "HiAgent应用密钥设置标签"
+  },
+  "openai_baseurl_label": {
+    "message": "OpenAI 基础 URL",
+    "description": "OpenAI基础URL设置标签"
+  },
+  "openai_apikey_label": {
+    "message": "OpenAI API 密钥",
+    "description": "OpenAI API密钥设置标签"
+  },
+  "model_label": {
+    "message": "模型",
+    "description": "模型设置标签"
+  },
+  "prompt_system_label": {
+    "message": "系统提示词",
+    "description": "系统提示词设置标签"
+  },
+  "chinawebber_baseurl_label": {
+    "message": "博大站群基础 URL",
+    "description": "博大站群基础URL设置标签"
+  },
+  "hiagent_user_id_label": {
+    "message": "HiAgent 用户ID",
+    "description": "用户ID设置标签"
+  },
+  "preferred_language_label": {
+    "message": "首选语言",
+    "description": "首选语言设置标签"
+  },
+  "import_export_label": {
+    "message": "导入/导出配置",
+    "description": "导入/导出配置部分标签"
+  },
+  "export_button": {
+    "message": "导出",
+    "description": "导出配置按钮文本"
+  },
+  "import_button": {
+    "message": "导入",
+    "description": "导入配置按钮文本"
+  },
+  "save_button": {
+    "message": "保存设置",
+    "description": "保存设置按钮文本"
+  },
+  "reset_button": {
+    "message": "重置默认值",
+    "description": "重置设置按钮文本"
+  },
+  "notification_success": {
+    "message": "设置已保存",
+    "description": "保存设置成功通知"
+  },
+  "notification_warning": {
+    "message": "已重置为默认值",
+    "description": "重置设置警告通知"
+  },
+  "processing_text": {
+    "message": "正在处理中...",
+    "description": "处理中显示文本"
+  },
+  "error_not_on_page": {
+    "message": "此功能仅在博大站群内容编辑页面可用",
+    "description": "不在正确页面时的错误消息"
+  },
+  "success_content_fetched": {
+    "message": "内容已获取",
+    "description": "获取内容成功消息"
+  },
+  "success_typeset_complete": {
+    "message": "内容已排版完成",
+    "description": "排版完成成功消息"
+  },
+  "success_content_copied": {
+    "message": "内容已复制到编辑器",
+    "description": "复制内容成功消息"
+  },
+  "success_content_copied_clipboard": {
+    "message": "内容已复制到剪贴板",
+    "description": "复制内容到剪贴板成功消息"
+  },
+  "success_title": {
+    "message": "成功",
+    "description": "通用成功标题"
+  },
+  "error_content_empty": {
+    "message": "没有可排版的内容",
+    "description": "内容为空时的错误消息"
+  },
+  "error_typeset_failed": {
+    "message": "排版失败",
+    "description": "排版失败错误消息"
+  },
+  "error_copy_failed": {
+    "message": "无法将内容复制到编辑器",
+    "description": "复制失败错误消息"
+  },
+  "error_title": {
+    "message": "错误",
+    "description": "通用错误标题"
+  },
+  "error_content_fetch": {
+    "message": "获取内容时发生错误",
+    "description": "获取内容失败错误消息"
+  },
+  "error_editor_init_failed": {
+    "message": "编辑器初始化失败",
+    "description": "编辑器初始化失败错误消息"
+  },
+  "error_editor_load_failed": {
+    "message": "编辑器加载失败，请刷新页面重试",
+    "description": "编辑器加载失败错误消息"
+  },
+  "ai_method_openai": {
+    "message": "OpenAI 接口",
+    "description": "OpenAI方法选项"
+  },
+  "ai_method_hiagent": {
+    "message": "HiAgent 接口",
+    "description": "HiAgent方法选项"
+  },
+  "language_english": {
+    "message": "英语",
+    "description": "英语选项"
+  },
+  "language_chinese": {
+    "message": "中文",
+    "description": "中文选项"
+  }
+}

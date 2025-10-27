@@ -1,8 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "AI Typeset for Chinawebber",
+  "name": "__MSG_extension_name__",
   "version": "1.0",
-  "description": "AI-powered content typesetting for 博大站群 content editor",
+  "description": "__MSG_extension_description__",
+  "default_locale": "en",
   "permissions": [
     "storage",
     "notifications",

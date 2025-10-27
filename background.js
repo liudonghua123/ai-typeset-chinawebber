@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     handleAiTypeset(request.content)
       .then(result => {
         if (result.success) {
-          showNotification('排版完成', '内容已成功排版并更新到编辑器中', 'success');
+          showNotification(chrome.i18n.getMessage('success_typeset_complete'), chrome.i18n.getMessage('success_content_copied'), 'success');
         } else {
           showNotification('排版失败', result.error, 'error');
         }
@@ -105,18 +105,32 @@ async function handleAiTypeset(content) {
     // Get settings
     const settings = await getSettings();
 
-    // Validate required settings
-    if (!settings.hiagent_appkey) {
-      throw new Error('HiAgent App Key 未配置，请在扩展设置中配置');
+    // Check AI method selection
+    if (settings.ai_method === 'hiagent') {
+      // Use hiagent API
+      // Validate required settings
+      if (!settings.hiagent_appkey) {
+        throw new Error('HiAgent App Key 未配置，请在扩展设置中配置');
+      }
+
+      // Create conversation
+      const appConversationID = await createConversation(settings);
+
+      // Get formatted content
+      const formattedContent = await chatQuery(settings, appConversationID, `<div>${content}</div>`);
+
+      return { success: true, formattedContent: formattedContent };
+    } else {
+      // Use OpenAI API as default
+      // Validate required settings
+      if (!settings.openai_apikey) {
+        throw new Error('OpenAI API Key 未配置，请在扩展设置中配置');
+      }
+
+      // Format content with OpenAI
+      const formattedContent = await formatContentWithOpenAI(settings, content);
+      return { success: true, formattedContent: formattedContent };
     }
-
-    // Create conversation
-    const appConversationID = await createConversation(settings);
-
-    // Get formatted content
-    const formattedContent = await chatQuery(settings, appConversationID, `<div>${content}</div>`);
-
-    return { success: true, formattedContent: formattedContent };
   } catch (error) {
     console.error('AI typeset error:', error);
     return { success: false, error: error.message || '排版过程中发生未知错误' };
@@ -134,11 +148,17 @@ function getSettings() {
       }
 
       chrome.storage.sync.get([
+        'ai_method',
         'hiagent_baseurl',
         'hiagent_appid',
         'hiagent_appkey',
+        'hiagent_user_id',
+        'openai_baseurl',
+        'openai_apikey',
+        'model',
+        'prompt_system',
         'chinawebber_baseurl',
-        'user_id'
+        'preferred_language'
       ], function(items) {
         if (chrome.runtime.lastError) {
           reject(new Error(chrome.runtime.lastError.message || 'Failed to get settings'));
@@ -148,11 +168,17 @@ function getSettings() {
         try {
           // Set default values if not configured
           const settings = {
+            ai_method: items.ai_method || 'openai',
             hiagent_baseurl: items.hiagent_baseurl || 'https://agent.ynu.edu.cn/api/proxy/api/v1',
             hiagent_appid: items.hiagent_appid || '',
             hiagent_appkey: items.hiagent_appkey || '',
+            hiagent_user_id: items.hiagent_user_id || '123',
+            openai_baseurl: items.openai_baseurl || 'https://api.openai.com/v1',
+            openai_apikey: items.openai_apikey || '',
+            model: items.model || 'gpt-3.5-turbo',
+            prompt_system: items.prompt_system || 'You are a content formatter. Format the following HTML content properly.',
             chinawebber_baseurl: items.chinawebber_baseurl || 'https://sites.ynu.edu.cn',
-            user_id: items.user_id || '123' // Default user ID
+            preferred_language: items.preferred_language || navigator.language.split('-')[0] || 'en'
           };
 
           resolve(settings);
@@ -166,6 +192,55 @@ function getSettings() {
       reject(new Error('Error getting settings: ' + error.message));
     }
   });
+}
+
+// Format content with OpenAI API
+async function formatContentWithOpenAI(settings, content) {
+  try {
+    // Validate settings
+    if (!settings.openai_baseurl || !settings.openai_apikey || !settings.model) {
+      throw new Error('Missing required settings for OpenAI API');
+    }
+
+    const apiUrl = `${settings.openai_baseurl}/chat/completions`;
+    const apiKey = settings.openai_apikey;
+    const model = settings.model;
+    const systemPrompt = settings.prompt_system || 'You are a content formatter. Format the following HTML content properly.';
+
+    // Prepare the messages
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: content }
+    ];
+
+    // Make the API call
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API request failed: HTTP ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data || !data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response from OpenAI API');
+    }
+
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI API error:', error);
+    throw new Error(`OpenAI API request failed: ${error.message}`);
+  }
 }
 
 // Create conversation with hiagent
@@ -184,7 +259,7 @@ async function createConversation(settings) {
         'Apikey': settings.hiagent_appkey
       },
       body: JSON.stringify({
-        "UserID": settings.user_id,
+        "UserID": settings.hiagent_user_id,
         "Inputs": {
           "var": "variable"
         }
@@ -234,7 +309,7 @@ async function chatQuery(settings, appConversationID, content) {
         'Apikey': settings.hiagent_appkey
       },
       body: JSON.stringify({
-        "UserID": settings.user_id,
+        "UserID": settings.hiagent_user_id,
         "AppConversationID": appConversationID,
         "Query": content,
         "ResponseMode": "blocking"

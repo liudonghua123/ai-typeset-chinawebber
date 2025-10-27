@@ -1,0 +1,194 @@
+{
+  "extension_name": {
+    "message": "AI Typeset for Chinawebber",
+    "description": "Extension name"
+  },
+  "extension_description": {
+    "message": "AI-powered content typesetting for Chinawebber content editor",
+    "description": "Extension description"
+  },
+  "popup_title": {
+    "message": "AI Typesetting Assistant",
+    "description": "Popup window title"
+  },
+  "get_content_button": {
+    "message": "Get Content",
+    "description": "Button text for getting content"
+  },
+  "ai_typeset_button": {
+    "message": "AI Typeset",
+    "description": "Button text for AI typesetting"
+  },
+  "copy_button": {
+    "message": "Copy",
+    "description": "Button text for copying content"
+  },
+  "source_editor_label": {
+    "message": "Source Content",
+    "description": "Label for source content editor"
+  },
+  "formatted_editor_label": {
+    "message": "Formatted Content",
+    "description": "Label for formatted content editor"
+  },
+  "format_button": {
+    "message": "Format HTML",
+    "description": "Button text for formatting HTML"
+  },
+  "copy_content_button": {
+    "message": "Copy Content",
+    "description": "Button text for copying content to clipboard"
+  },
+  "settings_title": {
+    "message": "AI Typesetting Assistant Settings",
+    "description": "Settings page title"
+  },
+  "settings_subtitle": {
+    "message": "Configure your AI typesetting service parameters",
+    "description": "Settings page subtitle"
+  },
+  "ai_method_label": {
+    "message": "AI Method",
+    "description": "Label for AI method selection"
+  },
+  "hiagent_baseurl_label": {
+    "message": "HiAgent Base URL",
+    "description": "Label for HiAgent base URL setting"
+  },
+  "hiagent_appid_label": {
+    "message": "HiAgent App ID",
+    "description": "Label for HiAgent App ID setting"
+  },
+  "hiagent_appkey_label": {
+    "message": "HiAgent App Key",
+    "description": "Label for HiAgent App Key setting"
+  },
+  "openai_baseurl_label": {
+    "message": "OpenAI Base URL",
+    "description": "Label for OpenAI base URL setting"
+  },
+  "openai_apikey_label": {
+    "message": "OpenAI API Key",
+    "description": "Label for OpenAI API Key setting"
+  },
+  "model_label": {
+    "message": "Model",
+    "description": "Label for Model setting"
+  },
+  "prompt_system_label": {
+    "message": "System Prompt",
+    "description": "Label for System Prompt setting"
+  },
+  "chinawebber_baseurl_label": {
+    "message": "Chinawebber Base URL",
+    "description": "Label for Chinawebber base URL setting"
+  },
+  "hiagent_user_id_label": {
+    "message": "HiAgent User ID",
+    "description": "Label for User ID setting"
+  },
+  "preferred_language_label": {
+    "message": "Preferred Language",
+    "description": "Label for Preferred Language setting"
+  },
+  "import_export_label": {
+    "message": "Import/Export Configuration",
+    "description": "Label for Import/Export Configuration section"
+  },
+  "export_button": {
+    "message": "Export",
+    "description": "Button text for exporting configuration"
+  },
+  "import_button": {
+    "message": "Import",
+    "description": "Button text for importing configuration"
+  },
+  "save_button": {
+    "message": "Save Settings",
+    "description": "Button text for saving settings"
+  },
+  "reset_button": {
+    "message": "Reset Defaults",
+    "description": "Button text for resetting settings"
+  },
+  "notification_success": {
+    "message": "Settings saved successfully",
+    "description": "Success notification for saving settings"
+  },
+  "notification_warning": {
+    "message": "Reset to default values",
+    "description": "Warning notification for resetting settings"
+  },
+  "processing_text": {
+    "message": "Processing...",
+    "description": "Text shown during processing"
+  },
+  "error_not_on_page": {
+    "message": "This feature is only available on Chinawebber content editing pages",
+    "description": "Error message when not on the correct page"
+  },
+  "success_content_fetched": {
+    "message": "Content retrieved successfully",
+    "description": "Success message when content is fetched"
+  },
+  "success_typeset_complete": {
+    "message": "Content formatted successfully",
+    "description": "Success message when typesetting is complete"
+  },
+  "success_content_copied": {
+    "message": "Content copied to editor",
+    "description": "Success message when content is copied"
+  },
+  "success_content_copied_clipboard": {
+    "message": "Content copied to clipboard",
+    "description": "Success message when content is copied to clipboard"
+  },
+  "success_title": {
+    "message": "Success",
+    "description": "Generic success title"
+  },
+  "error_content_empty": {
+    "message": "No content to process",
+    "description": "Error message when content is empty"
+  },
+  "error_typeset_failed": {
+    "message": "Formatting failed",
+    "description": "Error message when typesetting fails"
+  },
+  "error_copy_failed": {
+    "message": "Failed to copy content to editor",
+    "description": "Error message when copying fails"
+  },
+  "error_title": {
+    "message": "Error",
+    "description": "Generic error title"
+  },
+  "error_content_fetch": {
+    "message": "Error retrieving content",
+    "description": "Error message when content fetch fails"
+  },
+  "error_editor_init_failed": {
+    "message": "Editor initialization failed",
+    "description": "Error message when editor initialization fails"
+  },
+  "error_editor_load_failed": {
+    "message": "Editor failed to load, please refresh the page to try again",
+    "description": "Error message when editor fails to load"
+  },
+  "ai_method_openai": {
+    "message": "OpenAI Completions",
+    "description": "Option for OpenAI method"
+  },
+  "ai_method_hiagent": {
+    "message": "HiAgent",
+    "description": "Option for HiAgent method"
+  },
+  "language_english": {
+    "message": "English",
+    "description": "Option for English language"
+  },
+  "language_chinese": {
+    "message": "中文",
+    "description": "Option for Chinese language"
+  }
+}

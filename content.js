@@ -114,7 +114,7 @@
           if (response.success) {
             // Set the formatted content back to the editor
             document.querySelector('#vsb_content_1').innerHTML = response.formattedContent;
-            showNotification('排版完成', '内容已成功排版并更新到编辑器中');
+            showNotification(chrome.i18n.getMessage('success_typeset_complete'), chrome.i18n.getMessage('success_content_copied'));
           } else {
             throw new Error(response.error || '排版失败');
           }
@@ -265,7 +265,7 @@
         } else {
           throw new Error('无法找到编辑器元素来设置内容');
         }
-        showNotification('排版完成', '内容已成功排版并更新到编辑器中', 'success');
+        showNotification(chrome.i18n.getMessage('success_typeset_complete'), chrome.i18n.getMessage('success_content_copied'), 'success');
       } else {
         throw new Error(response.error || '排版失败');
       }

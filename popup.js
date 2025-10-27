@@ -1,5 +1,7 @@
 // popup.js
 document.addEventListener('DOMContentLoaded', async function() {
+  // Translate page elements
+  translatePage();
   // Elements
   const getContentBtn = document.getElementById('getContentBtn');
   const aiTypesetBtn = document.getElementById('aiTypesetBtn');
@@ -29,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     getContentBtn.disabled = !isValidPage;
 
     if (!isValidPage) {
-      showNotification('错误', '此功能仅在博大站群内容编辑页面可用', 'error');
+      showNotification(chrome.i18n.getMessage('error_not_on_page'), '', 'error');
     }
   });
 
@@ -80,13 +82,13 @@ document.addEventListener('DOMContentLoaded', async function() {
           sourceEditor.setValue(content);
         }
         aiTypesetBtn.disabled = false;
-        showNotification('成功', '内容已获取', 'success');
+        showNotification(chrome.i18n.getMessage('success_content_fetched'), '', 'success');
       } else {
         throw new Error('无法从编辑器获取内容');
       }
     } catch (error) {
       console.error('Error getting content:', error);
-      showNotification('错误', error.message || '获取内容时发生错误', 'error');
+      showNotification(chrome.i18n.getMessage('error_title'), error.message || chrome.i18n.getMessage('error_content_fetch'), 'error');
     } finally {
       showProcessing(false);
     }
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const currentContent = sourceEditor ? sourceEditor.getValue() : sourceContent;
 
     if (!currentContent) {
-      showNotification('错误', '没有可排版的内容', 'error');
+      showNotification(chrome.i18n.getMessage('error_title'), chrome.i18n.getMessage('error_content_empty'), 'error');
       return;
     }
 
@@ -131,13 +133,13 @@ document.addEventListener('DOMContentLoaded', async function() {
           formattedEditor.setValue(formattedContent);
         }
         copyBtn.disabled = false;
-        showNotification('成功', '内容已排版完成', 'success');
+        showNotification(chrome.i18n.getMessage('success_typeset_complete'), '', 'success');
       } else {
         throw new Error(response ? (response.error || '排版失败') : '排版服务无响应');
       }
     } catch (error) {
       console.error('Error during AI typesetting:', error);
-      showNotification('错误', error.message || '排版过程中发生错误', 'error');
+      showNotification(chrome.i18n.getMessage('error_typeset_failed'), error.message || chrome.i18n.getMessage('error_typeset_failed'), 'error');
     } finally {
       showProcessing(false);
     }
@@ -148,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const contentToCopy = formattedEditor ? formattedEditor.getValue() : formattedContent;
 
     if (!contentToCopy) {
-      showNotification('错误', '没有可复制的内容', 'error');
+      showNotification(chrome.i18n.getMessage('error_content_empty'), '', 'error');
       return;
     }
 
@@ -207,13 +209,13 @@ document.addEventListener('DOMContentLoaded', async function() {
       const success = results && results[0] ? results[0] : false;
 
       if (success) {
-        showNotification('成功', '内容已复制到编辑器', 'success');
+        showNotification(chrome.i18n.getMessage('success_content_copied'), '', 'success');
       } else {
         throw new Error('无法将内容复制到编辑器');
       }
     } catch (error) {
       console.error('Error copying content:', error);
-      showNotification('错误', error.message || '复制内容时发生错误', 'error');
+      showNotification(chrome.i18n.getMessage('error_copy_failed'), error.message || chrome.i18n.getMessage('error_copy_failed'), 'error');
     } finally {
       showProcessing(false);
     }
@@ -302,10 +304,10 @@ document.addEventListener('DOMContentLoaded', async function() {
           const content = sourceEditor.getValue();
           try {
             await navigator.clipboard.writeText(content);
-            showNotification('成功', '源内容已复制到剪贴板', 'success');
+            showNotification(chrome.i18n.getMessage('success_title'), chrome.i18n.getMessage('success_content_copied_clipboard'), 'success');
           } catch (error) {
             console.error('Error copying source content:', error);
-            showNotification('错误', '复制源内容失败', 'error');
+            showNotification(chrome.i18n.getMessage('error_title'), chrome.i18n.getMessage('error_copy_failed'), 'error');
           }
         }
       });
@@ -315,21 +317,21 @@ document.addEventListener('DOMContentLoaded', async function() {
           const content = formattedEditor.getValue();
           try {
             await navigator.clipboard.writeText(content);
-            showNotification('成功', '目标内容已复制到剪贴板', 'success');
+            showNotification(chrome.i18n.getMessage('success_title'), chrome.i18n.getMessage('success_content_copied_clipboard'), 'success');
           } catch (error) {
             console.error('Error copying target content:', error);
-            showNotification('错误', '复制目标内容失败', 'error');
+            showNotification(chrome.i18n.getMessage('error_title'), chrome.i18n.getMessage('error_copy_failed'), 'error');
           }
         }
       });
 
     } catch (error) {
       console.error('Error initializing Monaco Editor:', error);
-      showNotification('错误', '编辑器初始化失败: ' + error.message, 'error');
+      showNotification(chrome.i18n.getMessage('error_title'), chrome.i18n.getMessage('error_editor_init_failed') + ': ' + error.message, 'error');
 
       // Fallback to simple divs
-      sourceEditorElement.innerHTML = '<div class="editor-placeholder">编辑器加载失败，请刷新页面重试</div>';
-      formattedEditorElement.innerHTML = '<div class="editor-placeholder">编辑器加载失败，请刷新页面重试</div>';
+      sourceEditorElement.innerHTML = '<div class="editor-placeholder">' + chrome.i18n.getMessage('error_editor_load_failed') + '</div>';
+      formattedEditorElement.innerHTML = '<div class="editor-placeholder">' + chrome.i18n.getMessage('error_editor_load_failed') + '</div>';
     }
   }
 
@@ -424,3 +426,61 @@ document.addEventListener('DOMContentLoaded', async function() {
     }, 3000);
   }
 });
+
+// Translate page elements
+function translatePage() {
+  // Translate header
+  const title = chrome.i18n.getMessage('popup_title');
+  if (title) {
+    document.querySelector('.header h1').innerHTML = document.querySelector('.header h1').innerHTML.replace(
+      '__MSG_popup_title__',
+      title
+    );
+  }
+
+  // Translate all __MSG_*__ placeholders in the document
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+
+  const textNodes = [];
+  let node;
+  while (node = walker.nextNode()) {
+    textNodes.push(node);
+  }
+
+  textNodes.forEach(textNode => {
+    const text = textNode.textContent;
+    if (text && text.includes('__MSG_')) {
+      // Find all message keys in the text (e.g., __MSG_key1__ and __MSG_key2__)
+      const matches = text.match(/__MSG_([a-zA-Z0-9_]+)__/g);
+      if (matches) {
+        let updatedText = text;
+        matches.forEach(match => {
+          // Extract message key (e.g., __MSG_popup_title__ -> popup_title)
+          const keyMatch = match.match(/__MSG_([a-zA-Z0-9_]+)__/);
+          if (keyMatch) {
+            const messageKey = keyMatch[1];
+            const translated = chrome.i18n.getMessage(messageKey);
+            if (translated) {
+              updatedText = updatedText.replace(match, translated);
+            }
+          }
+        });
+        textNode.textContent = updatedText;
+      }
+    }
+  });
+
+  // Specifically update the processing text
+  const processingText = document.querySelector('.processing-text');
+  if (processingText) {
+    const processingMsg = chrome.i18n.getMessage('processing_text');
+    if (processingMsg) {
+      processingText.textContent = processingMsg;
+    }
+  }
+}
