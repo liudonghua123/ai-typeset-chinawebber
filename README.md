@@ -1,70 +1,183 @@
 # AI Typeset for Chinawebber
 
-一个针对博大站群内容编辑器的Chrome浏览器扩展，提供一键AI排版功能。
+AI Typeset for Chinawebber is a Chrome browser extension designed for the Chinawebber (博大站群) content editor system, specifically for Yunnan University's site system. The extension provides AI-powered one-click content typesetting, enhancing the content editing experience and improving formatting quality.
 
-## 功能特性
+## 📋 Table of Contents
 
-- 在博大站群内容编辑页面添加"一键排版"按钮
-- 提供弹出窗口界面，包含内容获取、AI排版和复制功能
-- 支持配置hiagent API参数
-- 提供处理状态指示器和通知提醒
+- [Description](#description)
+- [Purpose](#purpose)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [API Interfaces](#api-interfaces)
+- [File Structure](#file-structure)
+- [Development](#development)
+- [Contribution](#contribution)
+- [License](#license)
+- [Support](#support)
 
-## 安装说明
+## Description
 
-1. 下载或克隆本项目到本地目录
-2. 打开Chrome浏览器，进入 `chrome://extensions/`
-3. 开启右上角的"开发者模式"
-4. 点击"加载已解压的扩展程序"
-5. 选择本项目目录进行加载
+An AI-powered content typesetting Chrome extension for the Chinawebber (博大站群) content editor system at Yunnan University. The extension provides both a one-click formatting button directly on the content editing page and a comprehensive popup interface for manual content processing through AI formatting services.
 
-## 使用方法
+## Purpose
 
-### 一键排版
-1. 访问博大站群内容编辑页面 (支持带参数的URL): `https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp?wbnewsid=1759&newsposition=news`
-2. 在编辑器页面找到并点击"一键排版"按钮
-3. 等待处理完成，排版后的内容将自动更新到编辑器中
+The primary purpose of this extension is to streamline the content editing process within the Chinawebber system by integrating AI-powered typesetting capabilities. The extension addresses the need for improved content formatting and consistency, especially for documents that require standardized formatting with proper Chinese typography, such as academic articles, news posts, and official communications.
 
-### 手动排版
-1. 点击浏览器工具栏中的扩展图标打开弹出窗口
-2. 点击"获取内容"按钮从当前编辑器获取内容
-3. 点击"AI排版"按钮对内容进行排版处理
-4. 点击"复制"按钮将排版后的内容复制回编辑器
+## Features
 
-## 配置说明
+- **One-click Typesetting**: Adds a "一键排版" button directly to the Chinawebber content editor page
+- **Popup Interface**: Provides a comprehensive popup window with source and formatted content editors
+- **API Integration**: Connects to the hiagent API service for AI-powered content processing
+- **Configuration**: Allows users to configure API parameters through extension options
+- **Visual Feedback**: Includes processing indicators and notification system
+- **Monaco Editor**: Uses Monaco Editor for syntax-highlighted content editing
+- **Content Security**: Handles sensitive information like API keys securely
+- **Import/Export**: Supports configuration import/export functionality
+- **Multi-AI Support**: Supports various AI service providers including OpenAI, Anthropic, Google, and domestic providers
 
-点击扩展图标，选择"选项"或"管理扩展程序"中的"扩展选项"进行配置：
+## Installation
 
-- **HiAgent Base URL**: hiagent服务基础URL
-- **HiAgent App ID**: 应用ID
-- **HiAgent App Key**: 应用密钥
-- **Chinawebber Base URL**: 博大站群基础URL
-- **User ID**: 用户ID
+### English Installation
 
-## API接口
+1. Clone or download this project to a local directory
+2. Open Chrome browser and navigate to `chrome://extensions/`
+3. Enable "Developer mode" in the top-right corner
+4. Click "Load unpacked" and select the project directory
+5. Configure the extension with your API credentials via the options page
+6. The extension is now ready to use on Chinawebber pages
 
-扩展使用以下hiagent API接口进行内容排版：
+## Usage
 
-1. `create_conversation` - 创建对话会话
-2. `chat_query_v2` - 发送内容并获取排版结果
+### English Usage
 
-## 文件结构
+#### One-click Typesetting
+1. Navigate to a Chinawebber content editing page
+2. Click the "一键排版" button that appears on the page
+3. Wait for processing to complete (processing indicator will show)
+4. The formatted content will be automatically updated in the editor
+
+#### Manual Processing via Popup
+1. Click the extension icon in the browser toolbar
+2. Click "获取内容" (Get Content) to retrieve content from the current editor
+3. Click "AI排版" to process the content with AI formatting
+4. Review the formatted content in the second editor
+5. Click "复制" (Copy) to update the editor with formatted content
+
+## Configuration
+
+### English Configuration
+
+The extension needs to be configured with API credentials before use:
+
+1. Click the extension icon in the toolbar
+2. Select "Options" or go to `chrome://extensions/` and click "Options" under the extension
+3. Configure the following settings:
+
+- **AI Method**: Choose between OpenAI Completions or HiAgent
+- **HiAgent Base URL**: HiAgent service base URL (default: https://agent.ynu.edu.cn/api/proxy/api/v1)
+- **HiAgent App ID**: Your application ID
+- **HiAgent App Key**: Your application key (required for API access)
+- **HiAgent User ID**: Your user ID
+- **OpenAI Base URL**: OpenAI API base URL (with dropdown for popular providers)
+- **OpenAI API Key**: Your OpenAI API key (required for API access)
+- **Model**: AI model to use (default: gpt-3.5-turbo)
+- **System Prompt**: Custom system prompt for AI formatting (multiline editor)
+- **Chinawebber Base URL**: Chinawebber system base URL (default: https://sites.ynu.edu.cn)
+
+## API Interfaces
+
+The extension communicates with the hiagent API using two endpoints:
+1. `create_conversation` - Creates a conversation session
+2. `chat_query_v2` - Processes content with AI formatting (response mode: blocking)
+
+For OpenAI-compatible services, it uses the standard OpenAI API format.
+
+## File Structure
 
 ```
 ai-typeset-chinawebber/
-├── manifest.json          # 扩展配置文件
-├── content.js             # 内容脚本
-├── content.css            # 内容样式
-├── popup.html             # 弹出窗口界面
-├── popup.js               # 弹出窗口逻辑
-├── options.html           # 配置页面
-├── options.js             # 配置页面逻辑
-├── background.js          # 后台服务
-├── icon.svg               # 扩展图标
-└── README.md              # 说明文档
+├── manifest.json          # Extension configuration file
+├── background.js          # Background service worker
+├── content.js             # Content script logic
+├── content.css            # Content script styling
+├── popup.html             # Popup window interface
+├── popup.js               # Popup window logic
+├── options.html           # Configuration page
+├── options.js             # Configuration page logic
+├── icon.svg               # Extension icon
+├── icon.png               # Extension icon (alternative format)
+├── modified_openeditor.js # Modified openeditor function for iframe handling
+├── _locales/              # Localization files
+│   ├── en/
+│   │   └── messages.json
+│   └── zh/
+│       └── messages.json
+├── README.md              # Project documentation
+└── package.json           # Package dependencies (if any)
 ```
 
-## 注意事项
+## Development
 
-- 仅在指定的博大站群页面生效
-- 需要正确配置hiagent API参数才能正常使用
-- 确保网络连接正常以访问API服务
+### English Development
+
+To contribute to the development:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Commit your changes (`git commit -m 'Add some amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+Make sure to follow the existing code style and include tests if applicable.
+
+## Contribution
+
+### English Contribution
+
+We welcome contributions from the community! Whether you're fixing bugs, adding features, improving documentation, or suggesting improvements, your help is appreciated.
+
+Ways to contribute:
+- Report bugs and issues
+- Suggest new features
+- Improve documentation
+- Submit pull requests
+- Translate the extension to other languages
+- Provide feedback on usability
+
+When contributing code, please:
+- Follow the existing code style
+- Write clear commit messages
+- Include tests when adding new functionality
+- Update documentation as needed
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+### English Support
+
+If you encounter issues or have questions:
+
+1. Check the existing [Issues](https://github.com/liudonghua123/ai-typeset-chinawebber/issues) to see if your problem has already been reported
+2. If not, create a new issue with detailed information about your problem
+3. Provide steps to reproduce the issue
+4. Include your browser version and extension version
+5. For urgent support, contact the maintainers directly
+
+## Architecture Notes
+
+### English Architecture Notes
+
+The extension uses manifest V2 with the following components:
+
+- Uses `chrome.tabs.executeScript` for content injection
+- Callback-based approach for `chrome.tabs.query` instead of Promise-based
+- Content script handles UI injection and user interaction
+- Background script handles API communication
+- Popup window provides manual content processing
+- Options page for configuration management
