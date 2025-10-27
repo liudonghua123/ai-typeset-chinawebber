@@ -190,5 +190,15 @@
   "language_chinese": {
     "message": "中文",
     "description": "中文选项"
+  },
+  "execution_time_label": {
+    "message": "执行时间: $TIME$",
+    "description": "显示AI排版操作执行时间的标签",
+    "placeholders": {
+      "time": {
+        "content": "$1",
+        "example": "2.5s"
+      }
+    }
   }
 }

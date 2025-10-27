@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   let formattedContent = '';
   let sourceEditor = null;
   let formattedEditor = null;
+  let executionStartTime = null;
 
   // Check if we're on the correct page
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -103,6 +104,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       return;
     }
 
+    // Record start time
+    executionStartTime = new Date();
+
     try {
       showProcessing(true);
 
@@ -133,6 +137,13 @@ document.addEventListener('DOMContentLoaded', async function() {
           formattedEditor.setValue(formattedContent);
         }
         copyBtn.disabled = false;
+        
+        // Calculate execution time
+        const executionTime = new Date() - executionStartTime;
+        
+        // Display the execution time
+        updateExecutionTimeLabel(executionTime);
+        
         showNotification(chrome.i18n.getMessage('success_typeset_complete'), '', 'success');
       } else {
         throw new Error(response ? (response.error || '排版失败') : '排版服务无响应');
@@ -424,6 +435,29 @@ document.addEventListener('DOMContentLoaded', async function() {
     setTimeout(() => {
       notification.style.display = 'none';
     }, 3000);
+  }
+  
+  // Update the execution time label
+  function updateExecutionTimeLabel(executionTimeMs) {
+    const executionTimeLabel = document.getElementById('executionTimeLabel');
+    const executionTimeText = document.getElementById('executionTimeText');
+    
+    // Convert milliseconds to seconds
+    const executionTimeSec = executionTimeMs / 1000;
+    
+    // Format the time display (e.g. "2.5s" or "1250ms" if < 1s)
+    let timeDisplay;
+    if (executionTimeSec >= 1) {
+      timeDisplay = `${executionTimeSec.toFixed(1)}s`;
+    } else {
+      timeDisplay = `${executionTimeMs}ms`;
+    }
+    
+    executionTimeText.textContent = chrome.i18n.getMessage('execution_time_label', [timeDisplay]);
+    executionTimeLabel.style.display = 'flex'; // Show the label
+    
+    // Store the execution time in case we need to reference it later
+    executionStartTime = null;
   }
 });
 

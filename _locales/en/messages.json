@@ -190,5 +190,15 @@
   "language_chinese": {
     "message": "中文",
     "description": "Option for Chinese language"
+  },
+  "execution_time_label": {
+    "message": "Execution time: $TIME$",
+    "description": "Label showing execution time for AI Typeset operation",
+    "placeholders": {
+      "time": {
+        "content": "$1",
+        "example": "2.5s"
+      }
+    }
   }
 }
