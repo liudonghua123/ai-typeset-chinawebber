@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('ai_method').addEventListener('change', function() {
     toggleAIFields();
   });
+  
+  // Handle openai_baseurl change to show/hide custom URL field
+  document.getElementById('openai_baseurl').addEventListener('change', function() {
+    toggleCustomURLField();
+  });
 });
 
 // Translate page elements
@@ -149,7 +154,35 @@ function loadSettings() {
     document.getElementById('hiagent_appid').value = items.hiagent_appid || getDefaultValue('hiagent_appid');
     document.getElementById('hiagent_appkey').value = items.hiagent_appkey || getDefaultValue('hiagent_appkey');
     document.getElementById('hiagent_user_id').value = items.hiagent_user_id || getDefaultValue('hiagent_user_id');
-    document.getElementById('openai_baseurl').value = items.openai_baseurl || getDefaultValue('openai_baseurl');
+    
+    // Handle the openai_baseurl field - check if the value is a standard provider or custom
+    const openaiBaseURL = items.openai_baseurl || getDefaultValue('openai_baseurl');
+    const openaiBaseURLElement = document.getElementById('openai_baseurl');
+    const customURLElement = document.getElementById('openai_baseurl_custom');
+    
+    // Check if the stored value is one of the standard providers
+    const standardProviders = [
+      'https://api.openai.com/v1',
+      'https://api.anthropic.com/v1',
+      'https://generativelanguage.googleapis.com/v1beta',
+      'https://api.openrouter.ai/v1',
+      'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      'https://hunliu.tencentcloudapi.com/v1',
+      'https://dashscope.aliyuncs.com/api/v1',
+      'https://ark.cn-beijing.volces.com/api/v3'
+    ];
+    
+    if (standardProviders.includes(openaiBaseURL)) {
+      openaiBaseURLElement.value = openaiBaseURL;
+      customURLElement.style.display = 'none';
+      customURLElement.value = '';
+    } else {
+      // Custom URL
+      openaiBaseURLElement.value = '';
+      customURLElement.style.display = 'block';
+      customURLElement.value = openaiBaseURL;
+    }
+    
     document.getElementById('openai_apikey').value = items.openai_apikey || getDefaultValue('openai_apikey');
     document.getElementById('model').value = items.model || getDefaultValue('model');
     document.getElementById('prompt_system').value = items.prompt_system || getDefaultValue('prompt_system');
@@ -210,12 +243,24 @@ function getDefaultValue(key) {
 
 // Save settings to storage
 function saveSettings() {
+  const openaiBaseURLElement = document.getElementById('openai_baseurl');
+  const customURLElement = document.getElementById('openai_baseurl_custom');
+  
+  // Determine the actual value for openai_baseurl
+  let openaiBaseURLValue;
+  if (openaiBaseURLElement.value === '') {
+    // Custom URL selected
+    openaiBaseURLValue = customURLElement.value;
+  } else {
+    openaiBaseURLValue = openaiBaseURLElement.value;
+  }
+
   const settings = {
     ai_method: document.getElementById('ai_method').value,
     hiagent_baseurl: document.getElementById('hiagent_baseurl').value,
     hiagent_appid: document.getElementById('hiagent_appid').value,
     hiagent_appkey: document.getElementById('hiagent_appkey').value,
-    openai_baseurl: document.getElementById('openai_baseurl').value,
+    openai_baseurl: openaiBaseURLValue,
     openai_apikey: document.getElementById('openai_apikey').value,
     model: document.getElementById('model').value,
     prompt_system: document.getElementById('prompt_system').value,
@@ -235,7 +280,35 @@ function resetSettings() {
   document.getElementById('hiagent_baseurl').value = getDefaultValue('hiagent_baseurl');
   document.getElementById('hiagent_appid').value = getDefaultValue('hiagent_appid');
   document.getElementById('hiagent_appkey').value = getDefaultValue('hiagent_appkey');
-  document.getElementById('openai_baseurl').value = getDefaultValue('openai_baseurl');
+  
+  // Handle reset for openai_baseurl
+  const defaultOpenaiBaseURL = getDefaultValue('openai_baseurl');
+  const openaiBaseURLElement = document.getElementById('openai_baseurl');
+  const customURLElement = document.getElementById('openai_baseurl_custom');
+  
+  // Check if the default value is a standard provider
+  const standardProviders = [
+    'https://api.openai.com/v1',
+    'https://api.anthropic.com/v1',
+    'https://generativelanguage.googleapis.com/v1beta',
+    'https://api.openrouter.ai/v1',
+    'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    'https://hunliu.tencentcloudapi.com/v1',
+    'https://dashscope.aliyuncs.com/api/v1',
+    'https://ark.cn-beijing.volces.com/api/v3'
+  ];
+  
+  if (standardProviders.includes(defaultOpenaiBaseURL)) {
+    openaiBaseURLElement.value = defaultOpenaiBaseURL;
+    customURLElement.style.display = 'none';
+    customURLElement.value = '';
+  } else {
+    // Custom URL
+    openaiBaseURLElement.value = '';
+    customURLElement.style.display = 'block';
+    customURLElement.value = defaultOpenaiBaseURL;
+  }
+  
   document.getElementById('openai_apikey').value = getDefaultValue('openai_apikey');
   document.getElementById('model').value = getDefaultValue('model');
   document.getElementById('prompt_system').value = getDefaultValue('prompt_system');
@@ -284,6 +357,18 @@ function toggleAIFields() {
     hiagentFields.forEach(field => {
       field.closest('.form-group').style.display = 'none';
     });
+  }
+}
+
+// Toggle custom URL field based on selection
+function toggleCustomURLField() {
+  const openaiBaseURLElement = document.getElementById('openai_baseurl');
+  const customURLElement = document.getElementById('openai_baseurl_custom');
+  
+  if (openaiBaseURLElement.value === '') {
+    customURLElement.style.display = 'block';
+  } else {
+    customURLElement.style.display = 'none';
   }
 }
 

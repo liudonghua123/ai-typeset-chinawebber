@@ -94,7 +94,8 @@
     }
 
     input[type="text"],
-    input[type="password"] {
+    input[type="password"],
+    textarea {
       width: 100%;
       padding: 14px 16px;
       border: 2px solid var(--gray-200);
@@ -105,7 +106,8 @@
     }
 
     input[type="text"]:focus,
-    input[type="password"]:focus {
+    input[type="password"]:focus,
+    textarea:focus {
       outline: none;
       border-color: var(--primary-color);
       background-color: white;
@@ -113,8 +115,16 @@
     }
 
     input[type="text"]:hover,
-    input[type="password"]:hover {
+    input[type="password"]:hover,
+    textarea:hover {
       border-color: var(--gray-300);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      line-height: 1.5;
     }
     
     select {
@@ -399,7 +409,18 @@
           </svg>
           __MSG_openai_baseurl_label__
         </label>
-        <input type="text" id="openai_baseurl" placeholder="https://api.openai.com/v1">
+        <select id="openai_baseurl">
+          <option value="https://api.openai.com/v1">OpenAI</option>
+          <option value="https://api.anthropic.com/v1">Anthropic</option>
+          <option value="https://generativelanguage.googleapis.com/v1beta">Google (Gemini)</option>
+          <option value="https://api.openrouter.ai/v1">OpenRouter</option>
+          <option value="https://dashscope.aliyuncs.com/compatible-mode/v1">Aliyun</option>
+          <option value="https://api.lkeap.cloud.tencent.com/v1">Tencent</option>
+          <option value="https://api-inference.modelscope.cn/v1">ModelScope</option>
+          <option value="https://ark.cn-beijing.volces.com/api/v3">VolcEngine</option>
+          <option value="">自定义</option>
+        </select>
+        <input type="text" id="openai_baseurl_custom" placeholder="输入自定义API基础URL" style="display: none; margin-top: 10px;">
       </div>
 
       <div class="form-group">
@@ -432,7 +453,7 @@
           </svg>
           __MSG_prompt_system_label__
         </label>
-        <input type="text" id="prompt_system" placeholder="You are a content formatter. Format the following HTML content properly.">
+        <textarea id="prompt_system" placeholder="You are a content formatter. Format the following HTML content properly." rows="8"></textarea>
       </div>
 
       <div class="form-group">

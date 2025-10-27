@@ -291,6 +291,7 @@ async function formatContentWithOpenAI(settings, content) {
       body: JSON.stringify({
         model: model,
         messages: messages,
+        enable_thinking: false,
       }),
     });
 

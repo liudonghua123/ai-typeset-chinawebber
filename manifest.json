@@ -11,8 +11,16 @@
     "webRequest",
     "webRequestBlocking",
     "https://sites.ynu.edu.cn/*",
-    "https://agent.ynu.edu.cn/api/proxy/api/v1/*",
-    "https://cdnjs.cloudflare.com/*"
+    "https://agent.ynu.edu.cn/*",
+    "https://cdnjs.cloudflare.com/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.openrouter.ai/*",
+    "https://dashscope.aliyuncs.com/*",
+    "https://api.lkeap.cloud.tencent.com/*",
+    "https://api-inference.modelscope.cn/*",
+    "https://ark.cn-beijing.volces.com/*"
   ],
   "content_scripts": [
     {
