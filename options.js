@@ -270,7 +270,7 @@ function saveSettings() {
   };
 
   chrome.storage.sync.set(settings, function() {
-    showNotification(chrome.i18n.getMessage('notification_success'), '', 'success');
+    showNotification(chrome.i18n.getMessage('notification_success'), 'success');
   });
 }
 
@@ -316,7 +316,7 @@ function resetSettings() {
   document.getElementById('hiagent_user_id').value = getDefaultValue('hiagent_user_id');
   document.getElementById('preferred_language').value = getDefaultValue('preferred_language');
 
-  showNotification(chrome.i18n.getMessage('notification_warning'), '', 'warning');
+  showNotification(chrome.i18n.getMessage('notification_warning'), 'warning');
 
   // Toggle fields based on AI method
   toggleAIFields();
@@ -325,6 +325,7 @@ function resetSettings() {
 // Show notification
 function showNotification(message, type) {
   const notification = document.getElementById('notification');
+  // Use the message as provided, and the type for the CSS class
   notification.textContent = message;
   notification.className = 'notification ' + type;
   notification.style.display = 'block';

@@ -30,6 +30,7 @@
       color: var(--gray-900);
       line-height: 1.6;
       padding: 30px;
+      padding-top: 80px; /* Add space for fixed notification */
       min-width: 900px;
       min-height: 700px;
       margin: 0 auto;
@@ -201,14 +202,21 @@
     }
 
     .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       padding: 18px 24px;
       border-radius: var(--border-radius);
       color: white;
       font-weight: 500;
-      margin-bottom: 25px;
       display: none;
       box-shadow: var(--box-shadow);
       animation: fadeIn 0.3s ease-out;
+      z-index: 1000;
+      max-width: 80%;
+      min-width: 300px;
+      text-align: center;
     }
 
     @keyframes fadeIn {
