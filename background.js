@@ -13,6 +13,25 @@ chrome.runtime.onInstalled.addListener(() => {
   }
 });
 
+// Intercept and modify the openeditor.js file response
+chrome.webRequest.onBeforeRequest.addListener(
+  function(details) {
+    // Check if this is the openeditor.js file
+    if (details.url.includes('/system/site/column/news/openeditor.js')) {
+      // Redirect to our modified version
+      return {
+        redirectUrl: chrome.runtime.getURL('modified_openeditor.js')
+      };
+    }
+  },
+  {
+    urls: [
+      "https://sites.ynu.edu.cn/system/site/column/news/openeditor.js"
+    ]
+  },
+  ["blocking"]
+);
+
 // Listen for messages from content script or popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // Validate request

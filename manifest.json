@@ -8,7 +8,8 @@
     "storage",
     "notifications",
     "activeTab",
-    "https://sites.ynu.edu.cn/system/site/column/news/addnews.jsp*",
+    "webRequest",
+    "webRequestBlocking",
     "https://sites.ynu.edu.cn/*",
     "https://agent.ynu.edu.cn/api/proxy/api/v1/*",
     "https://cdnjs.cloudflare.com/*"
@@ -22,12 +23,15 @@
   ],
   "background": {
     "scripts": ["background.js"],
-    "persistent": false
+    "persistent": true
   },
   "browser_action": {
     "default_popup": "popup.html",
     "default_title": "AI Typeset"
   },
   "options_page": "options.html",
+  "web_accessible_resources": [
+    "modified_openeditor.js"
+  ],
   "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com; object-src 'self'"
 }
