@@ -166,19 +166,19 @@ function getSettings() {
         }
 
         try {
-          // Set default values if not configured
+          // Set default values from config.js if not configured
           const settings = {
-            ai_method: items.ai_method || 'openai',
-            hiagent_baseurl: items.hiagent_baseurl || 'https://agent.ynu.edu.cn/api/proxy/api/v1',
-            hiagent_appid: items.hiagent_appid || '',
-            hiagent_appkey: items.hiagent_appkey || '',
-            hiagent_user_id: items.hiagent_user_id || '123',
-            openai_baseurl: items.openai_baseurl || 'https://api.openai.com/v1',
-            openai_apikey: items.openai_apikey || '',
-            model: items.model || 'gpt-3.5-turbo',
-            prompt_system: items.prompt_system || 'You are a content formatter. Format the following HTML content properly.',
-            chinawebber_baseurl: items.chinawebber_baseurl || 'https://sites.ynu.edu.cn',
-            preferred_language: items.preferred_language || navigator.language.split('-')[0] || 'en'
+            ai_method: items.ai_method || getDefaultValue('ai_method'),
+            hiagent_baseurl: items.hiagent_baseurl || getDefaultValue('hiagent_baseurl'),
+            hiagent_appid: items.hiagent_appid || getDefaultValue('hiagent_appid'),
+            hiagent_appkey: items.hiagent_appkey || getDefaultValue('hiagent_appkey'),
+            hiagent_user_id: items.hiagent_user_id || getDefaultValue('hiagent_user_id'),
+            openai_baseurl: items.openai_baseurl || getDefaultValue('openai_baseurl'),
+            openai_apikey: items.openai_apikey || getDefaultValue('openai_apikey'),
+            model: items.model || getDefaultValue('model'),
+            prompt_system: items.prompt_system || getDefaultValue('prompt_system'),
+            chinawebber_baseurl: items.chinawebber_baseurl || getDefaultValue('chinawebber_baseurl'),
+            preferred_language: items.preferred_language || getDefaultValue('preferred_language')
           };
 
           resolve(settings);
@@ -192,6 +192,27 @@ function getSettings() {
       reject(new Error('Error getting settings: ' + error.message));
     }
   });
+}
+
+// Get default value from config.js
+function getDefaultValue(key) {
+  // Since we can't directly import config.js in background.js, 
+  // we'll define the defaults here based on config.js values
+  const DEFAULT_CONFIG = {
+    ai_method: 'openai',
+    hiagent_baseurl: 'https://agent.ynu.edu.cn/api/proxy/api/v1',
+    hiagent_appid: '',
+    hiagent_appkey: '',
+    hiagent_user_id: '123',
+    openai_baseurl: 'https://api.openai.com/v1',
+    openai_apikey: '',
+    model: 'gpt-3.5-turbo',
+    prompt_system: 'You are a content formatter. Format the following HTML content properly.',
+    chinawebber_baseurl: 'https://sites.ynu.edu.cn',
+    preferred_language: navigator.language || 'en'
+  };
+  
+  return DEFAULT_CONFIG[key];
 }
 
 // Format content with OpenAI API

@@ -142,21 +142,42 @@ function loadSettings() {
     'chinawebber_baseurl',
     'preferred_language'
   ], function(items) {
-    document.getElementById('chinawebber_baseurl').value = items.chinawebber_baseurl || 'https://sites.ynu.edu.cn';
-    document.getElementById('preferred_language').value = items.preferred_language || navigator.language.split('-')[0] || 'en';
-    document.getElementById('ai_method').value = items.ai_method || 'openai';
-    document.getElementById('hiagent_baseurl').value = items.hiagent_baseurl || 'https://agent.ynu.edu.cn/api/proxy/api/v1';
-    document.getElementById('hiagent_appid').value = items.hiagent_appid || '';
-    document.getElementById('hiagent_appkey').value = items.hiagent_appkey || '';
-    document.getElementById('hiagent_user_id').value = items.hiagent_user_id || '123';
-    document.getElementById('openai_baseurl').value = items.openai_baseurl || 'https://api.openai.com/v1';
-    document.getElementById('openai_apikey').value = items.openai_apikey || '';
-    document.getElementById('model').value = items.model || 'gpt-3.5-turbo';
-    document.getElementById('prompt_system').value = items.prompt_system || 'You are a content formatter. Format the following HTML content properly.';
+    document.getElementById('chinawebber_baseurl').value = items.chinawebber_baseurl || getDefaultValue('chinawebber_baseurl');
+    document.getElementById('preferred_language').value = items.preferred_language || getDefaultValue('preferred_language');
+    document.getElementById('ai_method').value = items.ai_method || getDefaultValue('ai_method');
+    document.getElementById('hiagent_baseurl').value = items.hiagent_baseurl || getDefaultValue('hiagent_baseurl');
+    document.getElementById('hiagent_appid').value = items.hiagent_appid || getDefaultValue('hiagent_appid');
+    document.getElementById('hiagent_appkey').value = items.hiagent_appkey || getDefaultValue('hiagent_appkey');
+    document.getElementById('hiagent_user_id').value = items.hiagent_user_id || getDefaultValue('hiagent_user_id');
+    document.getElementById('openai_baseurl').value = items.openai_baseurl || getDefaultValue('openai_baseurl');
+    document.getElementById('openai_apikey').value = items.openai_apikey || getDefaultValue('openai_apikey');
+    document.getElementById('model').value = items.model || getDefaultValue('model');
+    document.getElementById('prompt_system').value = items.prompt_system || getDefaultValue('prompt_system');
     
     // Toggle fields based on AI method
     toggleAIFields();
   });
+}
+
+// Get default value from config.js
+function getDefaultValue(key) {
+  // Since we can't directly import config.js in options.js, 
+  // we'll define the defaults here based on config.js values
+  const DEFAULT_CONFIG = {
+    ai_method: 'openai',
+    hiagent_baseurl: 'https://agent.ynu.edu.cn/api/proxy/api/v1',
+    hiagent_appid: '',
+    hiagent_appkey: '',
+    hiagent_user_id: '123',
+    openai_baseurl: 'https://api.openai.com/v1',
+    openai_apikey: '',
+    model: 'gpt-3.5-turbo',
+    prompt_system: 'You are a content formatter. Format the following HTML content properly.',
+    chinawebber_baseurl: 'https://sites.ynu.edu.cn',
+    preferred_language: navigator.language || 'en'
+  };
+  
+  return DEFAULT_CONFIG[key];
 }
 
 // Save settings to storage
@@ -182,17 +203,17 @@ function saveSettings() {
 
 // Reset settings to defaults
 function resetSettings() {
-  document.getElementById('ai_method').value = 'openai';
-  document.getElementById('hiagent_baseurl').value = 'https://agent.ynu.edu.cn/api/proxy/api/v1';
-  document.getElementById('hiagent_appid').value = '';
-  document.getElementById('hiagent_appkey').value = '';
-  document.getElementById('openai_baseurl').value = 'https://api.openai.com/v1';
-  document.getElementById('openai_apikey').value = '';
-  document.getElementById('model').value = 'gpt-3.5-turbo';
-  document.getElementById('prompt_system').value = 'You are a content formatter. Format the following HTML content properly.';
-  document.getElementById('chinawebber_baseurl').value = 'https://sites.ynu.edu.cn';
-  document.getElementById('hiagent_user_id').value = '123';
-  document.getElementById('preferred_language').value = navigator.language.split('-')[0] || 'en';
+  document.getElementById('ai_method').value = getDefaultValue('ai_method');
+  document.getElementById('hiagent_baseurl').value = getDefaultValue('hiagent_baseurl');
+  document.getElementById('hiagent_appid').value = getDefaultValue('hiagent_appid');
+  document.getElementById('hiagent_appkey').value = getDefaultValue('hiagent_appkey');
+  document.getElementById('openai_baseurl').value = getDefaultValue('openai_baseurl');
+  document.getElementById('openai_apikey').value = getDefaultValue('openai_apikey');
+  document.getElementById('model').value = getDefaultValue('model');
+  document.getElementById('prompt_system').value = getDefaultValue('prompt_system');
+  document.getElementById('chinawebber_baseurl').value = getDefaultValue('chinawebber_baseurl');
+  document.getElementById('hiagent_user_id').value = getDefaultValue('hiagent_user_id');
+  document.getElementById('preferred_language').value = getDefaultValue('preferred_language');
 
   showNotification(chrome.i18n.getMessage('notification_warning'), '', 'warning');
 
