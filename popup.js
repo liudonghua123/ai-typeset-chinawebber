@@ -353,16 +353,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         resolve();
         return;
       }
+      self.MonacoEnvironment = {
+        getWorkerUrl: function (moduleId, label) {
+          return chrome.runtime.getURL('monaco-editor/0.52.2/min/vs/base/worker/workerMain.js');
+        }
+      };
+
 
       // Create a more secure way to load Monaco
       const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js';
+      // Use relative path to local Monaco Editor
+      script.src = 'monaco-editor/0.52.2/min/vs/loader.min.js';
       script.onload = () => {
         // Use a more secure configuration
         if (typeof require !== 'undefined') {
           require.config({
             paths: {
-              'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs'
+              'vs': 'monaco-editor/0.52.2/min/vs'
             },
             'vs/nls': {
               availableLanguages: {

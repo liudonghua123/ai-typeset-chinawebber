@@ -12,7 +12,6 @@
     "webRequestBlocking",
     "https://sites.ynu.edu.cn/*",
     "https://agent.ynu.edu.cn/*",
-    "https://cdnjs.cloudflare.com/*",
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
     "https://generativelanguage.googleapis.com/*",
@@ -39,7 +38,8 @@
   },
   "options_page": "options.html",
   "web_accessible_resources": [
-    "modified_openeditor.js"
+    "modified_openeditor.js",
+    "monaco-editor/**/*"
   ],
-  "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; worker-src 'self' blob:; object-src 'self';"
 }
