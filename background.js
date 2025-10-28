@@ -1,5 +1,5 @@
 // background.js
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
   console.log('AI Typeset extension installed');
 
   // Create notification icon
@@ -11,26 +11,37 @@ chrome.runtime.onInstalled.addListener(() => {
       message: 'AI Typeset 扩展已成功安装并准备就绪'
     });
   }
+  
+  // Set up declarativeNetRequest rule to redirect openeditor.js
+  try {
+    // Remove any existing rules
+    await chrome.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: [1]
+    });
+    
+    // Add the rule to redirect openeditor.js
+    await chrome.declarativeNetRequest.updateSessionRules({
+      addRules: [{
+        id: 1,
+        priority: 1,
+        action: {
+          type: 'redirect',
+          redirect: {
+            extensionPath: '/modified_openeditor.js'
+          }
+        },
+        condition: {
+          urlFilter: '*/system/site/column/news/openeditor.js',
+          resourceTypes: ['script']
+        }
+      }]
+    });
+    
+    console.log('DeclarativeNetRequest rule added successfully');
+  } catch (error) {
+    console.error('Error setting up declarativeNetRequest:', error);
+  }
 });
-
-// Intercept and modify the openeditor.js file response
-chrome.webRequest.onBeforeRequest.addListener(
-  function(details) {
-    // Check if this is the openeditor.js file
-    if (details.url.includes('/system/site/column/news/openeditor.js')) {
-      // Redirect to our modified version
-      return {
-        redirectUrl: chrome.runtime.getURL('modified_openeditor.js')
-      };
-    }
-  },
-  {
-    urls: [
-      "https://sites.ynu.edu.cn/system/site/column/news/openeditor.js"
-    ]
-  },
-  ["blocking"]
-);
 
 // Listen for messages from content script or popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

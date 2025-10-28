@@ -56,31 +56,26 @@ document.addEventListener('DOMContentLoaded', async function() {
       });
       const tab = tabs[0];
 
-      // Execute script to get editor content using V2 API
-      const results = await new Promise((resolve, reject) => {
-        chrome.tabs.executeScript(tab.id, {
-          code: `(function() {
-            const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
-            if (iframe && iframe.contentDocument) {
-              editor = iframe.contentDocument.querySelector('#vsb_content_1');
-            }
+      // Execute script to get editor content using V3 API
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
+          if (iframe && iframe.contentDocument) {
+            const editor = iframe.contentDocument.querySelector('#vsb_content_1');
             return editor ? editor.innerHTML : null;
-          })()`
-        }, function(result) {
-          if (chrome.runtime.lastError) {
-            reject(new Error(chrome.runtime.lastError.message));
-            return;
           }
-          resolve(result);
-        });
+          return null;
+        }
       });
 
-      const content = results && results[0] ? results[0] : null;
+      // Extract the result values
+      const result = results && results[0] ? results[0].result : null;
 
-      if (content) {
-        sourceContent = content;
+      if (result !== null && result !== undefined) {
+        sourceContent = result;
         if (sourceEditor) {
-          sourceEditor.setValue(content);
+          sourceEditor.setValue(result);
         }
         aiTypesetBtn.disabled = false;
         showNotification(chrome.i18n.getMessage('success_content_fetched'), '', 'success');
@@ -110,25 +105,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     try {
       showProcessing(true);
 
-      // Send message to background script for AI typesetting using callback approach
-      const response = await new Promise((resolve, reject) => {
-        const msgResponse = chrome.runtime.sendMessage({
-          action: 'aiTypeset',
-          content: currentContent
-        }, (response) => {
-          // Check if there was an error during message sending
-          if (chrome.runtime.lastError) {
-            reject(new Error('Communication error: ' + chrome.runtime.lastError.message));
-            return;
-          }
-          resolve(response);
-        });
-        
-        // Handle the case where sendMessage might fail synchronously
-        if (msgResponse === undefined && !chrome.runtime.lastError) {
-          // For Manifest V2, sendMessage may return undefined when using the callback approach
-          // This is normal behavior, so we don't reject here
-        }
+      // Send message to background script for AI typesetting using Promise approach (Manifest V3 compatible)
+      const response = await chrome.runtime.sendMessage({
+        action: 'aiTypeset',
+        content: currentContent
       });
 
       if (response && response.success) {
@@ -185,39 +165,31 @@ document.addEventListener('DOMContentLoaded', async function() {
         throw new Error('只能在博大站群内容编辑页面复制内容');
       }
 
-      // Execute script to set editor content using V2 API
-      const results = await new Promise((resolve, reject) => {
-        chrome.tabs.executeScript(tab.id, {
-          code: `
-            (function(content) {
-              // First try to find the editor in the main document
-              let editor = document.querySelector('#vsb_content_1');
+      // Execute script to set editor content using V3 API
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: (content) => {
+          // First try to find the editor in the main document
+          let editor = document.querySelector('#vsb_content_1');
 
-              // If not found, try to find it in the iframe
-              if (!editor) {
-                const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
-                if (iframe && iframe.contentDocument) {
-                  editor = iframe.contentDocument.querySelector('#vsb_content_1');
-                }
-              }
-
-              if (editor) {
-                editor.innerHTML = content;
-                return true;
-              }
-              return false;
-            })(${JSON.stringify(contentToCopy)})
-          `
-        }, function(result) {
-          if (chrome.runtime.lastError) {
-            reject(new Error(chrome.runtime.lastError.message));
-            return;
+          // If not found, try to find it in the iframe
+          if (!editor) {
+            const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
+            if (iframe && iframe.contentDocument) {
+              editor = iframe.contentDocument.querySelector('#vsb_content_1');
+            }
           }
-          resolve(result);
-        });
+
+          if (editor) {
+            editor.innerHTML = content;
+            return true;
+          }
+          return false;
+        },
+        args: [contentToCopy]
       });
 
-      const success = results && results[0] ? results[0] : false;
+      const success = results && results[0] ? results[0].result : false;
 
       if (success) {
         showNotification(chrome.i18n.getMessage('success_content_copied'), '', 'success');

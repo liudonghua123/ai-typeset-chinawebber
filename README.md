@@ -173,11 +173,12 @@ If you encounter issues or have questions:
 
 ### English Architecture Notes
 
-The extension uses manifest V2 with the following components:
+The extension has been migrated to manifest V3 with the following components:
 
-- Uses `chrome.tabs.executeScript` for content injection
-- Callback-based approach for `chrome.tabs.query` instead of Promise-based
+- Uses `chrome.scripting.executeScript` for content injection (Manifest V3 requirement)
+- Promise-based approach for API calls with modern async/await patterns
+- Service worker as background script (Manifest V3 requirement)
+- Declarative Net Request API for URL redirection (Manifest V3 requirement)
 - Content script handles UI injection and user interaction
-- Background script handles API communication
 - Popup window provides manual content processing
 - Options page for configuration management

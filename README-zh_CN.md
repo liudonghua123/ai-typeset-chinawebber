@@ -173,11 +173,12 @@ ai-typeset-chinawebber/
 
 ### 中文架构说明
 
-扩展使用manifest V2，包含以下组件：
+扩展已迁移到manifest V3，包含以下组件：
 
-- 使用`chrome.tabs.executeScript`进行内容注入
-- `chrome.tabs.query`使用基于回调的方法而不是基于Promise的方法
+- 使用`chrome.scripting.executeScript`进行内容注入（Manifest V3要求）
+- 使用基于Promise的方法进行API调用，采用现代async/await模式
+- Service worker作为后台脚本（Manifest V3要求）
+- 声明式网络请求API用于URL重定向（Manifest V3要求）
 - 内容脚本处理UI注入和用户交互
-- 后台脚本处理API通信
 - 弹出窗口提供手动内容处理
 - 选项页面用于配置管理

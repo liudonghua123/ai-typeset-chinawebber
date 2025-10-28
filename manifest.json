@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "__MSG_extension_name__",
   "version": "1.0",
   "description": "__MSG_extension_description__",
@@ -8,8 +8,11 @@
     "storage",
     "notifications",
     "activeTab",
-    "webRequest",
-    "webRequestBlocking",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "scripting"
+  ],
+  "host_permissions": [
     "https://sites.ynu.edu.cn/*",
     "https://agent.ynu.edu.cn/*",
     "https://api.openai.com/*",
@@ -29,17 +32,20 @@
     }
   ],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": true
+    "service_worker": "background.js"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_title": "AI Typeset"
   },
   "options_page": "options.html",
   "web_accessible_resources": [
-    "modified_openeditor.js",
-    "monaco-editor/**/*"
+    {
+      "resources": ["modified_openeditor.js", "monaco-editor/**/*"],
+      "matches": ["https://sites.ynu.edu.cn/*", "https://agent.ynu.edu.cn/*"]
+    }
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; worker-src 'self' blob:; object-src 'self';"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  }
 }

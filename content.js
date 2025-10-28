@@ -84,26 +84,11 @@
           throw new Error('Editor content is empty or could not retrieve');
         }
 
-        // Send message to background script for AI typesetting using callback approach
+        // Send message to background script for AI typesetting using Promise approach (Manifest V3 compatible)
         try {
-          const response = await new Promise((resolve, reject) => {
-            const msgResponse = chrome.runtime.sendMessage({
-              action: 'oneClickTypeset',
-              content: editorContent
-            }, (response) => {
-              // Check if there was an error during message sending
-              if (chrome.runtime.lastError) {
-                reject(new Error('Communication error: ' + chrome.runtime.lastError.message));
-                return;
-              }
-              resolve(response);
-            });
-            
-            // Handle the case where sendMessage might fail synchronously
-            if (msgResponse === undefined && !chrome.runtime.lastError) {
-              // For Manifest V2, sendMessage may return undefined when using the callback approach
-              // This is normal behavior, so we don't reject here
-            }
+          const response = await chrome.runtime.sendMessage({
+            action: 'oneClickTypeset',
+            content: editorContent
           });
 
           // Check if response is valid
@@ -113,7 +98,18 @@
 
           if (response.success) {
             // Set the formatted content back to the editor
-            document.querySelector('#vsb_content_1').innerHTML = response.formattedContent;
+            const mainEditor = document.querySelector('#vsb_content_1');
+            const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
+            
+            if (mainEditor) {
+              mainEditor.innerHTML = response.formattedContent;
+            } else if (iframe && iframe.contentDocument) {
+              const iframeEditor = iframe.contentDocument.querySelector('#vsb_content_1');
+              if (iframeEditor) {
+                iframeEditor.innerHTML = response.formattedContent;
+              }
+            }
+            
             showNotification(chrome.i18n.getMessage('success_typeset_complete'), chrome.i18n.getMessage('success_content_copied'));
           } else {
             throw new Error(response.error || '排版失败');
@@ -250,21 +246,18 @@
 
       if (response.success) {
         // Set the formatted content back to the editor (check both main document and iframe)
-        let editor = document.querySelector('#vsb_content_1');
-
-        // If not found in main document, check iframe
-        if (!editor) {
-          const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
-          if (iframe && iframe.contentDocument) {
-            editor = iframe.contentDocument.querySelector('#vsb_content_1');
+        const mainEditor = document.querySelector('#vsb_content_1');
+        const iframe = document.querySelector('iframe[name="ueditor_subcontent"]');
+        
+        if (mainEditor) {
+          mainEditor.innerHTML = response.formattedContent;
+        } else if (iframe && iframe.contentDocument) {
+          const iframeEditor = iframe.contentDocument.querySelector('#vsb_content_1');
+          if (iframeEditor) {
+            iframeEditor.innerHTML = response.formattedContent;
           }
         }
-
-        if (editor) {
-          editor.innerHTML = response.formattedContent;
-        } else {
-          throw new Error('无法找到编辑器元素来设置内容');
-        }
+        
         showNotification(chrome.i18n.getMessage('success_typeset_complete'), chrome.i18n.getMessage('success_content_copied'), 'success');
       } else {
         throw new Error(response.error || '排版失败');
